@@ -2,11 +2,16 @@ import streamlit as st
 import pandas as pd
 import math
 import os
-from dotenv import load_dotenv
 from supabase import create_client
 from rapidfuzz import process, fuzz
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError:
+    load_dotenv = None
+
+if load_dotenv is not None:
+    load_dotenv()
 
 def get_config(key: str, default=None):
     if key in st.secrets:
