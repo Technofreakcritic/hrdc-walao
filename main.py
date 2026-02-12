@@ -8,9 +8,15 @@ from rapidfuzz import process, fuzz
 
 load_dotenv()
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
-SUPABASE_TABLE = os.getenv("SUPABASE_TABLE")
+def get_config(key: str, default=None):
+    if key in st.secrets:
+        return st.secrets[key]
+    return os.getenv(key, default)
+
+
+SUPABASE_URL = get_config("SUPABASE_URL")
+SUPABASE_KEY = get_config("SUPABASE_ANON_KEY")
+SUPABASE_TABLE = get_config("SUPABASE_TABLE", "wooohoo")
 
 # Session state
 if "show_easter_egg" not in st.session_state:
@@ -50,7 +56,7 @@ st.write(f"This app reads from Supabase database table `{SUPABASE_TABLE}`.")
 
 # ---- READ DATA FROM SUPABASE ----
 if not SUPABASE_URL or not SUPABASE_KEY:
-    st.error("⚠️ Supabase credentials not found. Please check your .env file.")
+    st.error("⚠️ Supabase credentials not found. Please check `.env` or `.streamlit/secrets.toml`.")
     st.stop()
 
 df = load_data()
